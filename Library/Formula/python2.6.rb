@@ -109,8 +109,10 @@ class Python26 <Formula
       args << "--enable-shared" unless ARGV.include? '--static'
     end
 
+    ENV["CFLAGS"] = ENV["CFLAGS"] + " -fwrapv"
+
     system "./configure", *args
-    system "make"
+    system "make", "CFLAGS=#{ENV.cflags}"
     ENV.j1 # Some kinds of installs must be serialized.
     system "make install"
 
@@ -156,3 +158,4 @@ class Python26 <Formula
     return s
   end
 end
+
