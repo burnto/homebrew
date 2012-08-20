@@ -34,7 +34,7 @@ class Gfortran < Formula
     end
   else
     # Lion
-    if MacOS.xcode_version >= '4.2'
+    if MacOS::Xcode.version >= '4.2'
       # This version contains an entire Apple-GCC 4.2 (i386/x86_64) build for
       # Lion. After installation, we will remove all compilers other than
       # GFortran.
@@ -48,6 +48,12 @@ class Gfortran < Formula
     end
   end
 
+  # For more information about GFortran, see:
+  #
+  #     http://gcc.gnu.org/wiki/GFortran
+  #
+  # The homepage points to r.research.att.com because this site contains
+  # specific information about the binary distribution that we use.
   homepage 'http://r.research.att.com/tools/'
 
   def download_strategy
@@ -58,8 +64,8 @@ class Gfortran < Formula
   skip_clean :all
 
   def install
-    if MacOS.xcode_version >= '4.2' and MACOS_VERSION == 10.7
-      ohai "Installing gfortran 4.2.4 for XCode 4.2 (build 5666)"
+    if MacOS::Xcode.version >= '4.2' and MACOS_VERSION >= 10.7
+      ohai "Installing gfortran 4.2.4 for XCode 4.2 (build 5666) or higher"
       safe_system "pax --insecure -rz -f Payload.gz -s ',./usr,#{prefix},'"
 
       # This package installs a whole GCC suite. Remove non-fortran

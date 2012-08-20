@@ -1,9 +1,10 @@
 require 'formula'
 
 class Cppcheck < Formula
-  url 'http://downloads.sourceforge.net/project/cppcheck/cppcheck/1.52/cppcheck-1.52.tar.bz2'
   homepage 'http://sourceforge.net/apps/mediawiki/cppcheck/index.php?title=Main_Page'
-  md5 'ebb9355890057a5145485dd42c18e05e'
+  url 'https://github.com/danmar/cppcheck/tarball/1.55'
+  sha1 '5a888427b9303420a1a583a2cb3919fb5ba3c5ce'
+
   head 'https://github.com/danmar/cppcheck.git'
 
   depends_on 'pcre' unless ARGV.include? '--no-rules'
@@ -32,15 +33,16 @@ class Cppcheck < Formula
     system "make", "DESTDIR=#{prefix}", "BIN=#{bin}", "install"
 
     if ARGV.include? '--with-gui'
-      Dir.chdir "gui"
-      if ARGV.include? '--no-rules'
-        system "qmake", "HAVE_RULES=no"
-      else
-        system "qmake"
-      end
+      cd "gui" do
+        if ARGV.include? '--no-rules'
+          system "qmake", "HAVE_RULES=no"
+        else
+          system "qmake"
+        end
 
-      system "make"
-      bin.install "cppcheck-gui.app"
+        system "make"
+        bin.install "cppcheck-gui.app"
+      end
     end
   end
 

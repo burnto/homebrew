@@ -1,41 +1,28 @@
 require 'formula'
 
 class Node < Formula
-  if ARGV.build_devel?
-    url 'http://nodejs.org/dist/v0.7.0/node-v0.7.0.tar.gz'
-    md5 '5aceaa4e7aa43d78f87005f468dd6e3a'
-  else
-    url 'http://nodejs.org/dist/v0.6.8/node-v0.6.8.tar.gz'
-    md5 '9fd7baa2d27b848c3134e6ae35bb87b2'
-  end
+  homepage 'http://nodejs.org/'
+  url 'http://nodejs.org/dist/v0.8.7/node-v0.8.7.tar.gz'
+  sha1 '58ffb5884304e2f8415d8cee7921c42f66fc8d7b'
 
   head 'https://github.com/joyent/node.git'
-
-  homepage 'http://nodejs.org/'
 
   # Leopard OpenSSL is not new enough, so use our keg-only one
   depends_on 'openssl' if MacOS.leopard?
 
-  fails_with_llvm :build => 2326
+  option 'enable-debug', 'Build with debugger hooks'
+
+  fails_with :llvm do
+    build 2326
+  end
 
   # Stripping breaks dynamic loading
   skip_clean :all
 
-  def options
-    [["--debug", "Build with debugger hooks."]]
-  end
-
   def install
-    unless ARGV.build_devel?
-      inreplace 'wscript' do |s|
-        s.gsub! '/usr/local', HOMEBREW_PREFIX
-        s.gsub! '/opt/local/lib', '/usr/lib'
-      end
-    end
-
     # Why skip npm install? Read https://github.com/mxcl/homebrew/pull/8784.
     args = ["--prefix=#{prefix}", "--without-npm"]
-    args << "--debug" if ARGV.include? '--debug'
+    args << "--debug" if build.include? 'enable-debug'
 
     system "./configure", *args
     system "make install"
@@ -45,7 +32,7 @@ class Node < Formula
     <<-EOS.undent
       Homebrew has NOT installed npm. We recommend the following method of
       installation:
-        curl http://npmjs.org/install.sh | sh
+        curl https://npmjs.org/install.sh | sh
 
       After installing, add the following path to your NODE_PATH environment
       variable to have npm libraries picked up:

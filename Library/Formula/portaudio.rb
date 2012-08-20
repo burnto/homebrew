@@ -7,14 +7,21 @@ class Portaudio < Formula
 
   depends_on 'pkg-config' => :build
 
-  fails_with_llvm :build => 2334
+  option :universal
 
-  def options
-    [["--universal", "Build a universal binary."]]
+  fails_with :llvm do
+    build 2334
+  end
+
+  # Fix PyAudio compilation on Lion
+  def patches
+    if MacOS.lion?
+      { :p0 => "https://trac.macports.org/export/94150/trunk/dports/audio/portaudio/files/patch-include__pa_mac_core.h.diff" }
+    end
   end
 
   def install
-    ENV.universal_binary if ARGV.build_universal?
+    ENV.universal_binary if build.universal?
 
     args = [ "--prefix=#{prefix}",
              "--disable-debug",

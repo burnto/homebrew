@@ -1,10 +1,16 @@
 require 'formula'
 
 class Eet < Formula
-  url 'http://download.enlightenment.org/releases/eet-1.5.0.tar.gz'
   homepage 'http://trac.enlightenment.org/e/wiki/Eet'
-  md5 'f6fd734fbf6a2852abf044a2e1a8cabf'
-  head 'http://svn.enlightenment.org/svn/e/trunk/eet/', :using => :svn
+  url 'http://download.enlightenment.org/releases/eet-1.6.1.tar.gz'
+  sha1 '88dbbfae46ff7295fc7a9e3fcfef639b855d67ac'
+
+  head 'http://svn.enlightenment.org/svn/e/trunk/eet/'
+
+  if ARGV.build_head?
+    depends_on :automake
+    depends_on :libtool
+  end
 
   depends_on 'pkg-config' => :build
   depends_on 'eina'
